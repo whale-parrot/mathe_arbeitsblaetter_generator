@@ -1,4 +1,5 @@
 # build.py
+
 import os
 import sys
 import PyInstaller.__main__
@@ -7,14 +8,15 @@ import streamlit
 # os.pathsep is ':' on Linux/Mac and ';' on Windows
 sep = os.pathsep
 
-# 1. Find the path to the streamlit package
+# Find Streamlit package paths
 streamlit_dir = os.path.dirname(streamlit.__file__)
 static_dir = os.path.join(streamlit_dir, "static")
 runtime_dir = os.path.join(streamlit_dir, "runtime")
 
 print(f"Building for {sys.platform} with separator '{sep}'...")
-print(f"Adding Streamlit static and runtime folders...")
+print("Adding Streamlit static and runtime folders...")
 
+# Platform-specific application name
 if sys.platform == "win32":
     app_name = "math-worksheets-windows"
 elif sys.platform == "darwin":
@@ -22,35 +24,49 @@ elif sys.platform == "darwin":
 else:
     app_name = "math-worksheets-linux"
 
-
-PyInstaller.__main__.run([
-    '--clean',
-    '--onefile',
+# Base arguments
+args = [
+    "--clean",
     f"--name={app_name}",
-    f'--add-data=icons{sep}icons',
-    f'--add-data=fonts{sep}fonts',
-    f'--add-data=app.py{sep}.',
-    f'--add-data=generator.py{sep}.',
+]
 
-    # Add the missing Streamlit static and runtime folders
-    f'--add-data={static_dir}{sep}streamlit/static',
-    f'--add-data={runtime_dir}{sep}streamlit/runtime',
-    '--copy-metadata=streamlit',
+# Build type
+if sys.platform == "darwin":
+    # Creates math-worksheets-macos.app
+    args.append("--windowed")
+else:
+    # Creates a single executable
+    args.append("--onefile")
 
-    # Force PyInstaller to bundle libraries used in app.py/generator.py
-    # Because Streamlit loads these dynamically, PyInstaller misses them automatically
-    '--collect-all=reportlab',
-    '--collect-all=svglib',
-    '--collect-all=pymupdf',
-    
-    # Also add them as hidden imports just to be safe
-    '--hidden-import=reportlab',
-    '--hidden-import=svglib',
-    '--hidden-import=pymupdf',
-    '--hidden-import=pandas',
-    '--hidden-import=numpy',
-    '--hidden-import=altair',
+# Application files and dependencies
+args.extend([
+    f"--add-data=icons{sep}icons",
+    f"--add-data=fonts{sep}fonts",
+    f"--add-data=app.py{sep}.",
+    f"--add-data=generator.py{sep}.",
 
-    'launcher.py'
+    # Streamlit runtime files
+    f"--add-data={static_dir}{sep}streamlit/static",
+    f"--add-data={runtime_dir}{sep}streamlit/runtime",
+    "--copy-metadata=streamlit",
+
+    # Dynamically loaded packages
+    "--collect-all=reportlab",
+    "--collect-all=svglib",
+    "--collect-all=pymupdf",
+
+    # Hidden imports
+    "--hidden-import=reportlab",
+    "--hidden-import=svglib",
+    "--hidden-import=pymupdf",
+    "--hidden-import=pandas",
+    "--hidden-import=numpy",
+    "--hidden-import=altair",
+
+    # Entry point
+    "launcher.py"
 ])
+
+PyInstaller.__main__.run(args)
+
 print("Build complete!")
