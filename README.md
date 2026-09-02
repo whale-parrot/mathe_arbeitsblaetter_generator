@@ -17,7 +17,6 @@ Welcome to the first official release of the **Zahlen Wettrennen Generator**. Th
 
 ### 🐛 Known Issues
 - First launch may take a few seconds as the app unpacks its temporary files.
-- *(Add any other minor quirks here if you have them)*
 
 ---
 *Built with Python, Streamlit, and ReportLab.*
