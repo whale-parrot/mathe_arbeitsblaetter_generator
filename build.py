@@ -15,10 +15,18 @@ runtime_dir = os.path.join(streamlit_dir, "runtime")
 print(f"Building for {sys.platform} with separator '{sep}'...")
 print(f"Adding Streamlit static and runtime folders...")
 
+if sys.platform == "win32":
+    app_name = "math-worksheets-windows"
+elif sys.platform == "darwin":
+    app_name = "math-worksheets-macos"
+else:
+    app_name = "math-worksheets-linux"
+
 
 PyInstaller.__main__.run([
     '--clean',
     '--onefile',
+    f"--name={app_name}",
     f'--add-data=icons{sep}icons',
     f'--add-data=fonts{sep}fonts',
     f'--add-data=app.py{sep}.',
@@ -43,7 +51,6 @@ PyInstaller.__main__.run([
     '--hidden-import=numpy',
     '--hidden-import=altair',
 
-    '--name=math-worksheets',
     'launcher.py'
 ])
 print("Build complete!")
