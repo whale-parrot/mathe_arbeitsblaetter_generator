@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: dist/math-worksheets${{ matrix.ext }}
+          path: ${{ matrix.artifact_path }}
           retention-days: 5
 
   release:
@@ -84,6 +84,6 @@ jobs:
             
             **macOS:** Right-click the file → Open → Open. This bypasses the "unidentified developer" warning.
             
-            **Linux:** Open terminal, navigate to the download folder, run `chmod +x math-worksheets` then `./math-worksheets`.
+            **Linux:** Open terminal, navigate to the download folder, run `chmod +x math-worksheets-linux` then `./math-worksheets-linux`.
           draft: false
           prerelease: false
